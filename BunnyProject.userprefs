@@ -1,0 +1,14 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CharacterScript.cs">
+    <Files>
+      <File FileName="../PinBall/Assets/Scripts/CameraController.cs" Line="17" Column="3" />
+      <File FileName="Assets/Scripts/CharacterScript.cs" Line="14" Column="3" />
+      <File FileName="Assets/Scripts/Rotator.cs" Line="8" Column="39" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
