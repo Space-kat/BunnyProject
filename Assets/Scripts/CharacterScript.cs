@@ -5,15 +5,24 @@ using System; //prevents unknown entity String error there probably a better sol
 
 public class CharacterScript : MonoBehaviour {
 
+	enum Sprites { Up, Down, Side, UpDiagonal, DownDiagonal, Blink, Hide, Sweat, Rotate };
+
 	public float speed;
-	public Sprite upSprite, downSprite, sideSprite, diagonalUpSprite, diagonalDownSprite, blinkingSprite, hidingSprite, sweatSprite, rotationSprite;
 	public bool Character;
+
+	private Vector3 lastPosition;
+	private Animator bunnyAnimator;
+	private SpriteRenderer spriteRenderer;
+	private float sideRotation;
+
+	void Start () {
+		spriteRenderer = GetComponent <SpriteRenderer>();
+		bunnyAnimator = GetComponent <Animator>();
+	}
 
 	void OnTriggerEnter2D(Collider2D other) {
 		Destroy (other.gameObject);
 	}
-
-	private Vector3 lastPosition;
 
 	void FixedUpdate() {
 		UpdatePosition();
@@ -38,65 +47,52 @@ public class CharacterScript : MonoBehaviour {
 
 	void UpdateSprite() {
 
-		var spriteRenderer = GetComponent <SpriteRenderer>();
 
 		if (MovingUp ()) {
-			// UPLEFTWARDS
-			if (MovingLeft ()) {
+			// UPLEFT OR UPRIGHT
+			if (MovingLeft () || MovingRight()) {
 
-				transform.rotation = new Quaternion(0f,0f,0,0);
-				spriteRenderer.sprite = diagonalUpSprite;
-
-			// UPRIGHTWARDS
-			} else if (MovingRight ()) {
-
-				transform.rotation = new Quaternion(0f,180f,0,0);
-				spriteRenderer.sprite = diagonalUpSprite;
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.UpDiagonal);
+				transform.rotation = new Quaternion(0f,sideRotation,0,0);
 
 			// JUST UP
 			} else {
-
-				transform.rotation = new Quaternion(0f,0f,0,0);
-				spriteRenderer.sprite = upSprite;
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Up);
 			}
+
+
 		} else if (MovingDown ()) {
-			// DOWN LEFTWARDS
-			if (MovingLeft ()) {
 
-				transform.rotation = new Quaternion(0f,0f,0,0);
-				spriteRenderer.sprite = diagonalDownSprite;
+			// DOWNLEFT OR DOWNRIGHT
+			if (MovingLeft () || MovingRight()) {
 
-			// DOWN RIGHTWARDS
-			} else if (MovingRight ()) {
-				
-				transform.rotation = new Quaternion(0f,180f,0,0);
-				spriteRenderer.sprite = diagonalDownSprite;
-
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.DownDiagonal);
+				transform.rotation = new Quaternion(0f,sideRotation,0,0);
 
 			// JUST DOWN
 			} else {
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Down);
+			}
 
-				transform.rotation = new Quaternion(0f,0f,0,0);
-				spriteRenderer.sprite = downSprite;
-			
-			}
 		} else {
-			// JUST LEFTWARDS
-			if (MovingLeft ()) {
-								
-				transform.rotation = new Quaternion(0f,0f,0,0);
-				spriteRenderer.sprite = sideSprite;
-				
-			// JUST RIGHTWARDS
-			} else if (MovingRight ()) {
-				
-				transform.rotation = new Quaternion(0f,180f,0,0);
-				spriteRenderer.sprite = sideSprite;
+
+			//RIGHT OR LEFT
+			if (MovingLeft() || MovingRight() ){
+
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Side);
+
+			// IDLE BLINKING
+			}else{
+				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Blink);
 			}
+
+			transform.rotation = new Quaternion(0f,sideRotation,0f,0);
 		}
 
 
 	}
+
+
 
 	Boolean MovingUp(){
 		return (transform.position.y > lastPosition.y);
@@ -107,11 +103,17 @@ public class CharacterScript : MonoBehaviour {
 	}
 
 	Boolean MovingLeft(){
-		return (transform.position.x < lastPosition.x);
+		var left = (transform.position.x < lastPosition.x);
+		if (left)
+			sideRotation = 0f; 
+		return left;
 	}
 
 	Boolean MovingRight (){
-		return (transform.position.x > lastPosition.x);
+		var right = (transform.position.x > lastPosition.x);
+		if (right)
+			sideRotation = 180f; 
+		return right;
 	}
 
 
