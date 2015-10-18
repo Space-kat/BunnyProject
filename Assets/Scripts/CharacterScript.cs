@@ -1,14 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using System; //prevents unknown entity String error there probably a better solution but it works ¯\_(ツ)_/¯ 
 
-public class CharacterScript : MonoBehaviour {
+public class CharacterScript : GameControl {
 
 	enum Sprites { Up, Down, Side, UpDiagonal, DownDiagonal, Blink, Hide, Sweat, Rotate };
 
-	public float speed;
-	public bool Character;
+	public float Speed;
 
 	private Vector3 lastPosition;
 	private Animator bunnyAnimator;
@@ -16,15 +15,17 @@ public class CharacterScript : MonoBehaviour {
 
 	void Start () {
 		bunnyAnimator = GetComponent <Animator>();
-	}
-
-	void OnTriggerEnter2D(Collider2D other) {
-		Destroy (other.gameObject);
+		ShowTextForSeconds("You are hungry");
 	}
 
 	void FixedUpdate() {
 		UpdatePosition();
 		UpdateSprite();
+	}
+
+	void OnTriggerEnter2D(Collider2D other) {
+		var gameControl = other.gameObject.GetComponent<GameControl> ();
+		if(gameControl) gameControl.SendMessage ("CharacterCollision");
 	}
 
 	void UpdatePosition() {
@@ -36,7 +37,7 @@ public class CharacterScript : MonoBehaviour {
 		moveVertical = Input.GetAxis ("Vertical");
 		
 		movement = new Vector3 (moveHorizontal, moveVertical);
-		movement = movement * speed;
+		movement = movement * Speed;
 
 		lastPosition = transform.position;
 		transform.position = transform.position + movement;
