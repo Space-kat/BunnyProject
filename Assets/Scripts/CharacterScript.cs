@@ -12,11 +12,9 @@ public class CharacterScript : MonoBehaviour {
 
 	private Vector3 lastPosition;
 	private Animator bunnyAnimator;
-	private SpriteRenderer spriteRenderer;
 	private float sideRotation;
 
 	void Start () {
-		spriteRenderer = GetComponent <SpriteRenderer>();
 		bunnyAnimator = GetComponent <Animator>();
 	}
 
