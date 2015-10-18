@@ -3,17 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
+// all things inherit from game control
+// allows us to give common methods and properties to all things
 public class GameControl : MonoBehaviour {
 	
 	GameObject objectText = null;
 	TextMesh message; 
 
-	// Use this for initialization
-	void Start () {
-
-	}
-
+	// allows character to register collision 
 	public void CharacterCollision(){}
+
+	// ------ SHOW TEXT
 
 	public void ShowTextForSeconds(string text, float seconds = 2f, bool destroyAfter = false) {
 		ObjectText ();
@@ -35,16 +35,17 @@ public class GameControl : MonoBehaviour {
 			objectText = new GameObject ();
 			message = objectText.AddComponent<TextMesh> ();
 			message.characterSize = 0.1f;
-			message.fontSize = 27;
+			message.fontSize = 20;
 			message.alignment = TextAlignment.Center;
 			message.anchor = TextAnchor.UpperCenter;
 		}
 
 		Vector3 position = GetComponent<Transform>().position;
-		position.y = position.y + 0.5f;
+		position.y = position.y + 0.3f;
 
 
 		objectText.transform.position = position;
 
 	}
+	// ------ END SHOW TEXT
 }

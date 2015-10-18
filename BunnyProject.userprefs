@@ -1,9 +1,10 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/GameControl.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CharacterScript.cs">
     <Files>
-      <File FileName="Assets/Scripts/CharacterScript.cs" Line="56" Column="14" />
-      <File FileName="Assets/Scripts/GameControl.cs" Line="26" Column="24" />
+      <File FileName="Assets/Scripts/CharacterScript.cs" Line="17" Column="45" />
+      <File FileName="Assets/Scripts/GameControl.cs" Line="13" Column="44" />
+      <File FileName="Assets/Scripts/Carrot.cs" Line="6" Column="25" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
