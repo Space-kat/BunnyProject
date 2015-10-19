@@ -20,6 +20,22 @@ public class GameControl : MonoBehaviour {
 		StartCoroutine(showTextForSeconds(text, seconds, destroyAfter));
 	}
 
+	public void ShowTextForSeconds(string[] texts, float seconds = 2f, bool destroyAfter = false) {
+		ObjectText ();
+		StartCoroutine(showTextForSeconds(texts, seconds, destroyAfter));
+	}
+
+	private IEnumerator showTextForSeconds(string[] texts, float seconds, bool destroyAfter) {
+		foreach (string text in texts) {
+			message.text = text;
+			yield return new WaitForSeconds (seconds); // waits seconds
+		}
+		Destroy (objectText);
+		if (destroyAfter) {
+			Destroy(this.gameObject);
+		}
+	}
+
 	private IEnumerator showTextForSeconds(string text, float seconds, bool destroyAfter) {
 		message.text = text;
 		yield return new WaitForSeconds(seconds); // waits seconds
