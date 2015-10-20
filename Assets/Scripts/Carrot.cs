@@ -3,14 +3,17 @@ using System.Collections;
 
 public class Carrot : GameControl {
 
+	public GameObject note;
 	private int collisions;
+	
 
 	// Use this for initialization
 	void Start () {
 		collisions = 0;
 	}
-	
-	public void CharacterCollision() {
+
+
+	public override void CharacterCollision() {
 		// Check for if it is visible so we don't register collisions with invisible objects
 		if (GetComponent<Renderer> ().enabled) {
 
@@ -47,10 +50,14 @@ public class Carrot : GameControl {
 	}
 
 	private void Collision2(){
-		ShowTextForSeconds ("Definately screaming", 2f);
+		ShowTextForSeconds ("Definately screaming", 2f, default(Vector3), "showNote");
 		GetComponent< Renderer >().enabled = false;
 
+	}
+
+	void showNote(){
 		// SHOW NOTE HERE
+		note.GetComponent< SpriteRenderer >().enabled = true;
 	}
 
 }

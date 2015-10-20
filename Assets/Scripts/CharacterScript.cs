@@ -10,46 +10,80 @@ public class CharacterScript : GameControl {
 	const int PICKUP_SECONDS_LIMIT = 10;
 
 	public float Speed;
-	public GameObject Score;
-	public GameObject Timer;
-	public GameObject Fader;
+	public GameObject Score, King, Timer, Fader;
 
 	private Vector3 lastPosition;
 	private Animator bunnyAnimator;
 	private float sideRotation;
 	private int currentScore;
+	private bool wonRevengeGame = false;
 	private bool wonPickupGame = false;
 	private bool fadeOut = false;
 	private bool fadeIn = false;
+	private bool canMove = true;
 
 	void Start () {
+
+		canMove = true;
+
 		bunnyAnimator = GetComponent <Animator>();
+		Fader.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, 1f);
 
 		if (this.tag == "Scene1") {
-			resetPickupGame();
+			canMove = false;
+			ShowTextForSeconds ("TITLE: The narcoleptic bunny and the carrots of revenge.");
+			StartCoroutine(waitThenResetPickupGame());
 		}
 
 		if (this.tag == "Scene2") {
-			resetDream();
+			ShowTextForSeconds ("Chapter 2: You are asleep");
+			StartCoroutine(waitThenResetDream());
+		}
+
+		if (this.tag == "Scene3") {
+			canMove = false;
+			ShowTextForSeconds ("Chapter 3: You are awake", 2f);
+			StartCoroutine(waitThenResetRevenge());
 		}
 	}
 
-	#region PICKUP_GAME
-
 	IEnumerator waitThenResetPickupGame(){
-		yield return new WaitForSeconds (3);
+		fadeIn = true;
+		yield return new WaitForSeconds (3f);
 		resetPickupGame ();
 	}
-	
+
+	IEnumerator waitThenResetDream(){
+		yield return new WaitForSeconds (3f);
+		fadeIn = true;
+		resetDream ();
+	}
+
+	IEnumerator waitThenResetRevenge(){
+		yield return new WaitForSeconds (3f);
+		fadeIn = true;
+		resetRevengeStage ();
+	}
+
+	void loseOnRevenge(){
+		FadeOut ();
+		ShowTextForSeconds("The End", 5f, default(Vector3), "reloadLevel");
+	}
+
+	void reloadLevel(){
+		Application.LoadLevel (Application.loadedLevel);
+	}
+
+
+
+	#region PICKUP_GAME
+
 	void resetPickupGame(){
-		Fader.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, 0f);
 		currentScore = 0;
 		UpdateScore ();
 		GetComponent<Transform> ().position = new Vector3 (0f, 0f, -0.1f);	
 		wonPickupGame = false;
-		StartPickupTimer ();
-		ShowTextForSeconds("Your family is hungry");
-		
+		ShowTextForSeconds(new string[]{"Your family is hungry", "Use WASD to find food"}, 2f, default(Vector3), "StartPickupTimer");
 		var pickups = GameObject.FindGameObjectsWithTag("Pickup");
 		foreach (var pickup in pickups) {
 			pickup.gameObject.GetComponent<Renderer>().enabled = true;
@@ -58,13 +92,17 @@ public class CharacterScript : GameControl {
 
 
 	void StartPickupTimer(){
+		ShowTextForSeconds("GO!", 0.5f);
+		canMove = true;
 		StartCoroutine (PickupTimer ());
 	}
 
 	void LosePickupGame ()
 	{
+		canMove = false;
 		ShowTextForSeconds ("Your family died of hunger");
-		Score.GetComponent<TextMesh>().text = "YOU LOSE";
+		FadeOut ();
+		Score.GetComponent<TextMesh>().text = "";
 		Timer.GetComponent<TextMesh>().text = "";
 		var pickups = GameObject.FindGameObjectsWithTag("Pickup");
 		foreach (var pickup in pickups) {
@@ -96,7 +134,12 @@ public class CharacterScript : GameControl {
 
 			if(spriteRenderer.color.a >= 1f) {
 				fadeOut = false;
-				Application.LoadLevel(Application.loadedLevel+1);
+				if(this.tag == "Scene1"){
+					int newLevel = Application.loadedLevel + (wonPickupGame ? 1 : 0);
+					Application.LoadLevel(newLevel);
+				}else if(this.tag == "Scene2"){
+					Application.LoadLevel(Application.loadedLevel+1);
+				}
 			} else {
 				spriteRenderer.color = new Color(1f,1f,1f, spriteRenderer.color.a + 0.01f);
 			}
@@ -122,9 +165,14 @@ public class CharacterScript : GameControl {
 
 			// update score
 			currentScore++;
-			UpdateScore();
-			if(currentScore == MAX_SCORE){
-				winPickupGame();
+
+			if(this.tag == "Scene1"){
+				UpdateScore();
+				if(currentScore == MAX_SCORE){
+					winPickupGame();
+				}
+			}else{
+				King.GetComponent<KingScript>().CausePain(currentScore);
 			}
 		}  
 	}
@@ -135,12 +183,12 @@ public class CharacterScript : GameControl {
 
 	void winPickupGame(){
 		wonPickupGame = true;
-		ShowTextForSeconds(new string[]{"You collected enough carrots to feed your family.", "Now you are sleepy"}, 3f, false, new Vector3(0,0,-0.1f), "FadeOut");
+		ShowTextForSeconds(new string[]{"You collected enough carrots to feed your family.", "Now you are sleepy"}, 3f, new Vector3(0,0,-0.1f), "FadeOut");
 		Score.GetComponent<TextMesh>().text = "";
 		Timer.GetComponent<TextMesh>().text = "";
 	}
 
-	void FadeOut() {
+	public void FadeOut() {
 		fadeOut = true;
 	}
 
@@ -150,8 +198,6 @@ public class CharacterScript : GameControl {
 	#region DREAM
 
 	void resetDream() {
-		Fader.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, 1f);
-		fadeIn = true;
 		ShowTextForSeconds("You are hungry", 3f);
 	}
 
@@ -159,28 +205,73 @@ public class CharacterScript : GameControl {
 	#endregion //DREAM
 
 
+	#region REVENGE
+
+	public void WinGame(){
+		FadeOut ();
+		ShowTextForSeconds(new string[]{"TITLE: All the carrot children were dead", "TITLE: In his grief the carrot king was defeated", "TITLE: You won"}, 4f, default(Vector3), "resetEntireGame");
+	}
+
+	void resetEntireGame(){
+		Application.LoadLevel (0);
+	}
+
+	void resetRevengeStage ()
+	{
+		currentScore = 0;
+		King.GetComponent<Transform> ().position = new Vector3 (-1f, 0f, -0.1f);
+		GetComponent<Transform> ().position = new Vector3 (1f, 0.03f, -0.1f);	
+		wonRevengeGame = false;
+		var pickups = GameObject.FindGameObjectsWithTag("Pickup");
+		foreach (var pickup in pickups) {
+			pickup.gameObject.GetComponent<Renderer>().enabled = true;
+		}
+
+		string[] conversation = new string[]{
+			"OTHER: Hey friend, what's wrong?",
+			"YOU: I had the worst dream", "YOU: Carrots were out to get me",
+			"OTHER: That was no dream",
+			"YOU: What.. *stammer* what do you mean?",
+			"OTHER: You have done us a great wrong", "OTHER: Eaten my children without remorse",
+			"OTHER: Now I will make you suffer"
+		};
+		ShowTextForSeconds(conversation, 1.2f, new Vector3(0f,1f,-0.5f), "kingTransform");
+	}
+
+	void kingTransform(){
+		canMove = true;
+		King.GetComponent<KingScript> ().Transformation ();
+	}
+
+	#endregion //REVENGE
+
+
 
 	#region MOVEMENT_ANIMATION
 
 	void UpdatePosition() {
+
+		if (canMove) {
+			float moveHorizontal, moveVertical;
+			Vector3 movement;
 		
-		float moveHorizontal, moveVertical;
-		Vector3 movement;
+			moveHorizontal = Input.GetAxis ("Horizontal");
+			moveVertical = Input.GetAxis ("Vertical");
 		
-		moveHorizontal = Input.GetAxis ("Horizontal");
-		moveVertical = Input.GetAxis ("Vertical");
-		
-		movement = new Vector3 (moveHorizontal, moveVertical);
-		movement = movement * Speed;
-		
-		lastPosition = transform.position;
-		transform.position = transform.position + movement;
+			movement = new Vector3 (moveHorizontal, moveVertical);
+			movement = movement * Speed;
+
+			lastPosition = transform.position;
+			transform.position = transform.position + movement;
+		} else {
+			lastPosition = transform.position;
+		}
+
 		
 	}
 	
 	void UpdateSprite() {
-		
-		
+
 		if (MovingUp ()) {
 			// UPLEFT OR UPRIGHT
 			if (MovingLeft () || MovingRight()) {
@@ -216,7 +307,11 @@ public class CharacterScript : GameControl {
 				
 				// IDLE BLINKING
 			}else{
-				bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Blink);
+				if(this.tag == "Scene3"){
+					bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Hide);
+				}else{
+					bunnyAnimator.SetInteger ("CurrentAnimation", (int) Sprites.Blink);	
+				}
 			}
 			
 			transform.rotation = new Quaternion(0f,sideRotation,0f,0);
