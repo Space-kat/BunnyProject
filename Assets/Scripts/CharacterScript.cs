@@ -12,12 +12,15 @@ public class CharacterScript : GameControl {
 	public float Speed;
 	public GameObject Score;
 	public GameObject Timer;
+	public GameObject Fader;
 
 	private Vector3 lastPosition;
 	private Animator bunnyAnimator;
 	private float sideRotation;
 	private int currentScore;
 	private bool wonPickupGame = false;
+	private bool fadeOut = false;
+	private bool fadeIn = false;
 
 	void Start () {
 		bunnyAnimator = GetComponent <Animator>();
@@ -39,12 +42,13 @@ public class CharacterScript : GameControl {
 	}
 	
 	void resetPickupGame(){
+		Fader.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, 0f);
 		currentScore = 0;
 		UpdateScore ();
 		GetComponent<Transform> ().position = new Vector3 (0f, 0f, -0.1f);	
 		wonPickupGame = false;
 		StartPickupTimer ();
-		ShowTextForSeconds("You are hungry");
+		ShowTextForSeconds("Your family is hungry");
 		
 		var pickups = GameObject.FindGameObjectsWithTag("Pickup");
 		foreach (var pickup in pickups) {
@@ -59,7 +63,7 @@ public class CharacterScript : GameControl {
 
 	void LosePickupGame ()
 	{
-		ShowTextForSeconds ("You died of hunger");
+		ShowTextForSeconds ("Your family died of hunger");
 		Score.GetComponent<TextMesh>().text = "YOU LOSE";
 		Timer.GetComponent<TextMesh>().text = "";
 		var pickups = GameObject.FindGameObjectsWithTag("Pickup");
@@ -86,6 +90,26 @@ public class CharacterScript : GameControl {
 	void FixedUpdate() {
 		UpdatePosition();
 		UpdateSprite();
+
+		if (fadeOut) {
+			var spriteRenderer = Fader.GetComponent<SpriteRenderer> ();
+
+			if(spriteRenderer.color.a >= 1f) {
+				fadeOut = false;
+				Application.LoadLevel(Application.loadedLevel+1);
+			} else {
+				spriteRenderer.color = new Color(1f,1f,1f, spriteRenderer.color.a + 0.01f);
+			}
+		}else if (fadeIn) {
+			var spriteRenderer = Fader.GetComponent<SpriteRenderer> ();
+			
+			if(spriteRenderer.color.a <= 0f) {
+				fadeIn = false;
+			} else {
+				spriteRenderer.color = new Color(1f,1f,1f, spriteRenderer.color.a - 0.01f);
+			}
+		}
+
 	}
 
 	void OnTriggerEnter2D(Collider2D other) {
@@ -111,11 +135,14 @@ public class CharacterScript : GameControl {
 
 	void winPickupGame(){
 		wonPickupGame = true;
-		ShowTextForSeconds(new string[]{"You have sated your hunger.", "Now you are sleepy"}, 3f);
-		Score.GetComponent<TextMesh>().text = "YOU WIN";
+		ShowTextForSeconds(new string[]{"You collected enough carrots to feed your family.", "Now you are sleepy"}, 3f, false, new Vector3(0,0,-0.1f), "FadeOut");
+		Score.GetComponent<TextMesh>().text = "";
 		Timer.GetComponent<TextMesh>().text = "";
 	}
 
+	void FadeOut() {
+		fadeOut = true;
+	}
 
 	#endregion //PICKUP_GAME
 
@@ -123,7 +150,9 @@ public class CharacterScript : GameControl {
 	#region DREAM
 
 	void resetDream() {
-
+		Fader.GetComponent<SpriteRenderer> ().color = new Color (1f, 1f, 1f, 1f);
+		fadeIn = true;
+		ShowTextForSeconds("You are hungry", 3f);
 	}
 
 

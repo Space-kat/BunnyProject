@@ -15,17 +15,16 @@ public class GameControl : MonoBehaviour {
 
 	// ------ SHOW TEXT
 
-	public void ShowTextForSeconds(string text, float seconds = 2f, bool destroyAfter = false) {
-		ObjectText ();
-		StartCoroutine(showTextForSeconds(text, seconds, destroyAfter));
+	public void ShowTextForSeconds(string text, float seconds = 2f, bool destroyAfter = false, Vector3 position = default(Vector3), string andThen = null) {
+		ShowTextForSeconds( new string[]{text}, seconds, destroyAfter, position, andThen);
 	}
 
-	public void ShowTextForSeconds(string[] texts, float seconds = 2f, bool destroyAfter = false) {
-		ObjectText ();
-		StartCoroutine(showTextForSeconds(texts, seconds, destroyAfter));
+	public void ShowTextForSeconds(string[] texts, float seconds = 2f, bool destroyAfter = false, Vector3 position = default(Vector3),  string andThen = null) {
+		ObjectText (position);
+		StartCoroutine(showTextForSeconds(texts, seconds, destroyAfter, andThen));
 	}
 
-	private IEnumerator showTextForSeconds(string[] texts, float seconds, bool destroyAfter) {
+	private IEnumerator showTextForSeconds(string[] texts, float seconds, bool destroyAfter, string andThen) {
 		foreach (string text in texts) {
 			message.text = text;
 			yield return new WaitForSeconds (seconds); // waits seconds
@@ -34,18 +33,12 @@ public class GameControl : MonoBehaviour {
 		if (destroyAfter) {
 			Destroy(this.gameObject);
 		}
-	}
-
-	private IEnumerator showTextForSeconds(string text, float seconds, bool destroyAfter) {
-		message.text = text;
-		yield return new WaitForSeconds(seconds); // waits seconds
-		Destroy (objectText);
-		if (destroyAfter) {
-			Destroy(this.gameObject);
+		if (andThen != null) {
+			this.SendMessage(andThen);
 		}
 	}
 
-	private void ObjectText(){
+	private void ObjectText(Vector3 position){
 
 		if (!objectText) {
 			objectText = new GameObject ();
@@ -56,8 +49,10 @@ public class GameControl : MonoBehaviour {
 			message.anchor = TextAnchor.UpperCenter;
 		}
 
-		Vector3 position = GetComponent<Transform>().position;
-		position.y = position.y + 0.3f;
+		if (position == default(Vector3)) {
+			position = GetComponent<Transform>().position;
+			position.y = position.y + 0.3f;
+		}
 
 
 		objectText.transform.position = position;
