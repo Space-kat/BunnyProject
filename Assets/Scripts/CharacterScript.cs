@@ -7,10 +7,12 @@ public class CharacterScript : GameControl {
 
 	enum Sprites { Up, Down, Side, UpDiagonal, DownDiagonal, Blink, Hide, Sweat, Rotate };
 	const int MAX_SCORE=9;
-	const int PICKUP_SECONDS_LIMIT = 10;
+	const int PICKUP_SECONDS_LIMIT = 12;
 
+	
 	public float Speed;
 	public GameObject Score, King, Timer, Fader;
+
 
 	private Vector3 lastPosition;
 	private Animator bunnyAnimator;
@@ -46,7 +48,8 @@ public class CharacterScript : GameControl {
 			StartCoroutine(waitThenResetRevenge());
 		}
 	}
-
+	
+	}
 	IEnumerator waitThenResetPickupGame(){
 		fadeIn = true;
 		yield return new WaitForSeconds (3f);
@@ -110,8 +113,6 @@ public class CharacterScript : GameControl {
 		}
 		StartCoroutine( waitThenResetPickupGame() );
 	}
-
-
 
 	IEnumerator PickupTimer(){
 
@@ -209,7 +210,7 @@ public class CharacterScript : GameControl {
 
 	public void WinGame(){
 		FadeOut ();
-		ShowTextForSeconds(new string[]{"TITLE: All the carrot children were dead", "TITLE: In his grief the carrot king was defeated", "TITLE: You won"}, 4f, default(Vector3), "resetEntireGame");
+		ShowTextForSeconds(new string[]{"TITLE: All the carrot children were dead" , "TITLE: In his grief the carrot king was defeated" , "TITLE: You won"}, 4f, default(Vector3), "resetEntireGame");
 	}
 
 	void resetEntireGame(){
@@ -235,7 +236,7 @@ public class CharacterScript : GameControl {
 			"OTHER: You have done us a great wrong", "OTHER: Eaten my children without remorse",
 			"OTHER: Now I will make you suffer"
 		};
-		ShowTextForSeconds(conversation, 1.2f, new Vector3(0f,1f,-0.5f), "kingTransform");
+		ShowTextForSeconds(conversation, 1.5f, new Vector3(0f,1f,-0.5f), "kingTransform");
 	}
 
 	void kingTransform(){

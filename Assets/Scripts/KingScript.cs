@@ -35,7 +35,7 @@ public class KingScript : GameControl {
 	void CharacterCollision(){
 		bunnyIsDead = true;
 		character.GetComponent<SpriteRenderer> ().enabled = false;
-		character.GetComponent<CharacterScript>().ShowTextForSeconds(new string[]{"You were eaten", "The carrots rest is peace"}, 2f, new Vector3 (0, 0, -0.5f), "loseOnRevenge");
+		character.GetComponent<CharacterScript>().ShowTextForSeconds(new string[]{"You were eaten", "The carrots rest in peace"}, 3f, new Vector3 (0, 0, -0.5f), "loseOnRevenge");
 	}
 
 	// Update is called once per frame
