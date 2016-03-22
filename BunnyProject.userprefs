@@ -1,10 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/CharacterScript.cs">
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="../SpacerShooter/Assets/Scripts/SpaceShooter/ShipPlayerController.cs">
     <Files>
-      <File FileName="Assets/Scripts/GameControl.cs" Line="75" Column="5" />
-      <File FileName="Assets/Scripts/CharacterScript.cs" Line="64" Column="68" />
-      <File FileName="Assets/Scripts/KingScript.cs" Line="38" Column="115" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/BackgroundScroller.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/DestroyByBoundary.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/DestroyByContact.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/DestroyByTime.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/GameController.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/Mover.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/RandomRotator.cs" Line="1" Column="1" />
+      <File FileName="../SpacerShooter/Assets/Scripts/SpaceShooter/ShipPlayerController.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
